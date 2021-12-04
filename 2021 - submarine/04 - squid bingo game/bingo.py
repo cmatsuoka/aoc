@@ -30,6 +30,9 @@ class Board:
 
 
 def _extract_lines(width: int, height: int, numbers: Sequence[int]) -> List[Set[int]]:
+    if len(numbers) != width * height:
+        raise ValueError("board size and data are inconsistent")
+
     lines: List[Set[int]] = []
     for i in range(height):
         start = i * width
@@ -39,6 +42,9 @@ def _extract_lines(width: int, height: int, numbers: Sequence[int]) -> List[Set[
 
 
 def _extract_columns(width: int, height: int, numbers: Sequence[int]) -> List[Set[int]]:
+    if len(numbers) != width * height:
+        raise ValueError("board size and data are inconsistent")
+
     columns: List[Set[int]] = []
     for j in range(width):
         cdata = set()

@@ -14,6 +14,12 @@ def test_extract_lines():
     ]
 
 
+def test_extract_lines_error():
+    with pytest.raises(ValueError) as raised:
+        lines = bingo._extract_lines(4, 4, list(range(15)))
+    assert str(raised.value) == "board size and data are inconsistent"
+
+
 def test_extract_columns():
     columns = bingo._extract_columns(4, 4, list(range(16)))
     assert columns == [
@@ -22,6 +28,12 @@ def test_extract_columns():
        { 2, 6, 10, 14 },
        { 3, 7, 11, 15 },
     ]
+
+
+def test_extract_columns_error():
+    with pytest.raises(ValueError) as raised:
+        lines = bingo._extract_columns(4, 4, list(range(17)))
+    assert str(raised.value) == "board size and data are inconsistent"
 
 
 def test_board():
