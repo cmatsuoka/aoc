@@ -1,0 +1,12 @@
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+lib/
+.tox/
+.mypy_cache/
+
+# binaries
+*.so
+*.a
+bin/
