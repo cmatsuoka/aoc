@@ -24,7 +24,6 @@ class Board:
     def sum_remaining(self) -> int:
         total = 0
         for line in self._lines:
-            print("line =", line)
             total += sum(line)
         return total
 

@@ -1,30 +1,25 @@
 import fileinput
 
-data = fileinput.input()
 
-line = next(data)
-d0 = int(line)
+def solve(input_file):
+    aa = int(input_file.readline())
+    d0 = int(input_file.readline())
+    d1 = int(input_file.readline())
 
-line = next(data)
-d1 = int(line)
+    prev = aa + d0 + d1
+    incs = 0
 
-line = next(data)
-d2 = int(line)
+    for line in input_file:
+        d2 = int(line)
+        curr = d0 + d1 + d2
+        if curr > prev:
+            incs += 1
+        d0 = d1
+        d1 = d2
+        prev = curr
 
-prev = d0 + d1 + d2
+    return incs
 
-d0 = d1
-d1 = d2
 
-incs = 0
-
-for line in data:
-    d2 = int(line)
-    curr = d0 + d1 + d2
-    if curr > prev:
-        incs += 1
-    d0 = d1
-    d1 = d2
-    prev = curr
-
-print(incs)
+if __name__ == "__main__":
+    print(solve(fileinput.FileInput()))

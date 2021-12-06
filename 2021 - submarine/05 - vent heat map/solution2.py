@@ -3,23 +3,28 @@ import fileinput
 from heatmap import Heatmap
 from line import Line, Point
 
-    
-lines = []
 
-# parse input
-for input_line in fileinput.input():
-    a, b = input_line.split(" -> ")
-    x0, y0 = (int(val) for val in a.split(","))
-    x1, y1 = (int(val) for val in b.split(","))
-    line = Line(start=Point(x0, y0), end=Point(x1, y1))
+def solve(input_file):
+    lines = []
 
-    if line.is_vertical() or line.is_horizontal() or line.is_diagonal():
-        lines.append(line)
+    # parse input
+    for input_line in input_file:
+        a, b = input_line.split(" -> ")
+        x0, y0 = (int(val) for val in a.split(","))
+        x1, y1 = (int(val) for val in b.split(","))
+        line = Line(start=Point(x0, y0), end=Point(x1, y1))
 
-canvas = Heatmap(1000, 1000)
+        if line.is_vertical() or line.is_horizontal() or line.is_diagonal():
+            lines.append(line)
 
-# draw lines
-for line in lines:
-    line.draw(canvas)
+    canvas = Heatmap(1000, 1000)
 
-print(canvas.count(min_value=2))
+    # draw lines
+    for line in lines:
+        line.draw(canvas)
+
+    return canvas.count(min_value=2)
+
+
+if __name__ == "__main__":
+    print(solve(fileinput.FileInput()))

@@ -1,5 +1,6 @@
 import fileinput
 
+
 def solve(file_input):
     line = file_input.readline().strip()
 

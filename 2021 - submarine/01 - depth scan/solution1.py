@@ -1,14 +1,17 @@
 import fileinput
 
-data = fileinput.input()
 
-prev = next(data)
+def solve(input_file):
+    prev = input_file.readline()
+    incs = 0
 
-incs = 0
+    for curr in input_file:
+        if int(curr) > int(prev):
+            incs += 1
+        prev = curr
 
-for curr in data:
-    if int(curr) > int(prev):
-        incs += 1
-    prev = curr
+    return incs
 
-print(incs)
+
+if __name__ == "__main__":
+    print(solve(fileinput.FileInput()))
