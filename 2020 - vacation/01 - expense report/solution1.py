@@ -1,17 +1,17 @@
 import fileinput
 
-entries = set()
-for line in fileinput.input():
-    entries.add(int(line))
 
-while True:
-    try:
+def solve(input_file):
+    entries = set()
+    for line in input_file:
+        entries.add(int(line))
+
+    while True:
         x = entries.pop()
-    except KeyError:
-        break
+        complement = 2020 - x
+        if complement in entries:
+            return x * complement
 
-    complement = 2020 - x
-    if complement in entries:
-        print(f"{x} + {complement} = {x + complement}")
-        print(f"{x} * {complement} = {x * complement}")
-        break
+
+if __name__ == "__main__":
+    print(solve(fileinput.FileInput()))

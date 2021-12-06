@@ -1,6 +1,3 @@
-import fileinput
-
-
 class Map:
     def __init__(self, data):
         self._data = data
@@ -10,9 +7,9 @@ class Map:
         self._height = len(data)
 
     @classmethod
-    def from_file(cls):
+    def from_file(cls, input_file):
         data = []
-        for line in fileinput.input():
+        for line in input_file:
             data.append(line.strip())
         return Map(data)
 
@@ -27,3 +24,6 @@ class Map:
     def is_inside(self):
         return self._pos_y < self._height
 
+    def home(self):
+        self._pos_x = 0
+        self._pos_y = 0

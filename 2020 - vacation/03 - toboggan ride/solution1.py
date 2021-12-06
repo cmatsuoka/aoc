@@ -1,13 +1,20 @@
+import fileinput
+
 from mapping import Map
 
 
-trees = 0
-m = Map.from_file()
+def solve(input_file):
+    m = Map.from_file(input_file)
 
-m.walk(3, 1)
-while m.is_inside():
-    if m.tree_here():
-        trees += 1
+    trees = 0
     m.walk(3, 1)
+    while m.is_inside():
+        if m.tree_here():
+            trees += 1
+        m.walk(3, 1)
 
-print("number of trees =", trees)
+    return trees
+
+
+if __name__ == "__main__":
+    print(solve(fileinput.FileInput()))

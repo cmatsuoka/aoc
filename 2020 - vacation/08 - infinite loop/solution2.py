@@ -3,32 +3,33 @@ import fileinput
 import simulator
 
 
-# load code
-memory = []
-for line in fileinput.input():
-    line = line.strip()
-    instruction, operand = line.split()
-    memory.append(simulator.MemoryPos(instruction, int(operand)))
-    
-# patch code and reexecute
-for pos in memory:
-    if pos.instruction != "jmp":
-       continue
+def solve(input_file):
+    # load code
+    memory = []
+    for line in input_file:
+        line = line.strip()
+        instruction, operand = line.split()
+        memory.append(simulator.MemoryPos(instruction, int(operand)))
 
-    pos.instruction = "nop"   
+    # patch code and reexecute
+    for pos in memory:
+        if pos.instruction != "jmp":
+            continue
 
-    success = False
-    cpu = simulator.Simulator(memory)
-    try:
-        cpu.execute()
-        success = True
-        break
-    except simulator.InfiniteLoop as err:
-        pass
+        pos.instruction = "nop"
 
-    pos.instruction = "jmp"
+        success = False
+        cpu = simulator.Simulator(memory)
+        try:
+            cpu.execute()
+            return cpu.accumulator
+        except simulator.InfiniteLoop as err:
+            pass
 
-if success:
-    print(f"acc = {cpu.accumulator}")
-else:
-    print("didn't find a solution")
+        pos.instruction = "jmp"
+
+    return None
+
+
+if __name__ == "__main__":
+    print(solve(fileinput.FileInput()))

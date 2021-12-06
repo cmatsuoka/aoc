@@ -8,7 +8,7 @@ class MemoryPos:
         self.instruction = instruction
         self.operand = operand
         self.visited = False
-   
+
 
 class Simulator:
     def __init__(self, mem):
@@ -27,13 +27,13 @@ class Simulator:
     def _do_cycle(self) -> bool:
         if self._ip >= len(self._mem):
             return False
-    
+
         pos = self._mem[self._ip]
         if pos.visited:
             raise InfiniteLoop()
-    
+
         pos.visited = True
-    
+
         if pos.instruction == "nop":
             self._ip += 1
         elif pos.instruction == "acc":
