@@ -40,8 +40,8 @@ class Line:
             canvas.add(x, self.start.y)
 
     def _draw_diagonal(self, canvas: Heatmap) -> None:
-        step_x = _spaceship(self.start.x, self.end.x)
-        step_y = _spaceship(self.start.y, self.end.y)
+        step_x = cmp(self.end.x, self.start.x)
+        step_y = cmp(self.end.y, self.start.y)
 
         x = self.start.x
         y = self.start.y
@@ -51,9 +51,5 @@ class Line:
             y += step_y
 
 
-def _spaceship(a, b) -> int:
-    if a < b:
-        return 1
-    if a > b:
-        return -1
-    return 0
+def cmp(a, b):
+    return (a > b) - (a < b) 
