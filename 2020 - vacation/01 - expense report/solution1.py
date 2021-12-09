@@ -2,9 +2,7 @@ import fileinput
 
 
 def solve(input_file):
-    entries = set()
-    for line in input_file:
-        entries.add(int(line))
+    entries = {int(x) for x in input_file}
 
     while True:
         x = entries.pop()

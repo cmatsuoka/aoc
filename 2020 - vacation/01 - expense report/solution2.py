@@ -17,9 +17,7 @@ def _find_addends(sum_value: int, entries: Set[int]) -> Optional[Tuple[int, int]
 
 
 def solve(input_file):
-    entries = []
-    for line in input_file:
-        entries.append(int(line))
+    entries = [int(x) for x in input_file]
 
     for i in range(len(entries)):
         candidate = entries[i]
