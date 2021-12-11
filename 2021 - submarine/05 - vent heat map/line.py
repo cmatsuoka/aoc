@@ -5,6 +5,7 @@ from heatmap import Heatmap
 
 Point = namedtuple("Point", ["x", "y"])
 
+
 class Line:
     def __init__(self, start: Point, end: Point):
         self.start = start
@@ -52,4 +53,4 @@ class Line:
 
 
 def cmp(a, b):
-    return (a > b) - (a < b) 
+    return (a > b) - (a < b)
