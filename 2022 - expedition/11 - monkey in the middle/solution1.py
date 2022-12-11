@@ -3,7 +3,7 @@ from typing import List
 
 
 class _MonkeyNote:
-    def __init__(self, input_file) -> None:
+    def __init__(self, input_file: fileinput.FileInput) -> None:
         self.starting_items = [int(x) for x in input_file.readline()[18:].split(",")]
         (self.operator, self.operand) = input_file.readline().split()[-2:]
         self.divisible_by = int(input_file.readline().split()[-1])
@@ -11,7 +11,7 @@ class _MonkeyNote:
         self.throw_false = int(input_file.readline().split()[-1])
 
 
-def solve(input_file):
+def solve(input_file: fileinput.FileInput) -> int:
     notes: List[_MonkeyNote] = []
     while True:
         # Read notes from input file
