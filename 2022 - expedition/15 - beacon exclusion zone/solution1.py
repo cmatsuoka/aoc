@@ -1,7 +1,7 @@
 import fileinput
 import re
 from dataclasses import dataclass
-from typing import List
+from typing import List, Set, Tuple
 
 
 @dataclass
@@ -11,7 +11,7 @@ class Sensor:
     radius: int
 
 
-def solve(input_file: fileinput.FileInput, *, target_y: int) -> int:
+def solve(input_file: fileinput.FileInput, target_y: int) -> int:
     sensors: List[Sensor] = []
     beacons: Set[Tuple[int, int]] = set()
 
@@ -20,7 +20,7 @@ def solve(input_file: fileinput.FileInput, *, target_y: int) -> int:
         x, y = int(parts[3]), int(parts[5])
         bx, by = int(parts[11]), int(parts[13])
         radius = abs(bx - x) + abs(by - y)
-         
+
         sensors.append(Sensor(x, y, radius))
         beacons.add((bx, by))
 
@@ -33,7 +33,7 @@ def solve(input_file: fileinput.FileInput, *, target_y: int) -> int:
     # check coverage range of each filtered sensor in row target_y
     extents: List[Tuple[int, int]] = []
     for sensor in sensors:
-        distance_x =  sensor.radius - abs(sensor.y - target_y)
+        distance_x = sensor.radius - abs(sensor.y - target_y)
         extents.append((sensor.x - distance_x, sensor.x + distance_x))
 
     # compute total coverage of all extents
@@ -48,7 +48,7 @@ def solve(input_file: fileinput.FileInput, *, target_y: int) -> int:
     level = 0
     count = 0
 
-    prev_start: int
+    prev_start = 0  # won't be used before start of extent
     for limit in sorted(limits):
         if limit[1]:  # end of extent
             level -= 1
