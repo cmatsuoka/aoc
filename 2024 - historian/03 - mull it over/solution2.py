@@ -13,12 +13,13 @@ def solve(input_file: fileinput.FileInput[str]) -> int:
         parm = INS_RE.findall(data[i:])
         if not parm:
             continue
-        if parm[0][0] == "mul":
+        (ins, arg1, arg2) = parm[0]
+        if ins == "mul" and arg1 and arg2:
             if enabled:
-                total += int(parm[0][1]) * int(parm[0][2])
-        elif parm[0][0] == "do":
+                total += int(arg1) * int(arg2)
+        elif ins == "do":
             enabled = True
-        elif parm[0][0] == "don't":
+        elif ins == "don't":
             enabled = False
 
     return total
