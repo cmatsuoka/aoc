@@ -3,7 +3,32 @@ import fileinput
 from solution1 import Guard, Room
 
 
-def patrol(room: Room, guard: Guard, *, in_multiverse: bool = False) -> int:
+def patrol_multiverse(room: Room, guard: Guard) -> bool:
+    guard.turn()
+    while True:
+        loc = guard.location()
+        if room.been_there(*loc):
+            return True
+
+        room.mark(*loc)
+
+        newx, newy, blocked, outside = room.probe(*loc)
+        if outside:
+            break
+
+        if blocked:
+            guard.turn()
+        else:
+            guard.walk_to(newx, newy)
+
+    return False
+
+
+def solve(input_file: fileinput.FileInput[str]) -> int:
+    m = [[x for x in line.strip()] for line in input_file]
+    room = Room(m)
+    guard = Guard(*room.start_point())
+
     obstacles = 0
     while True:
         loc = guard.location()
@@ -16,24 +41,11 @@ def patrol(room: Room, guard: Guard, *, in_multiverse: bool = False) -> int:
         if blocked:
             guard.turn()
         else:
-            if in_multiverse:
-                if room.been_there(newx, newy, loc[2]):
-                    return 1
-            else:
-                room2 = room.with_block(newx, newy)
-                guard2 = guard.clone()
-                obstacles += patrol(room2, guard2, in_multiverse=True)
+            if patrol_multiverse(room.with_block(newx, newy), guard.clone()):
+                obstacles += 1
             guard.walk_to(newx, newy)
 
     return obstacles
-
-
-def solve(input_file: fileinput.FileInput[str]) -> int:
-    m = [[x for x in line.strip()] for line in input_file]
-    room = Room(m)
-    guard = Guard(*room.start_point())
-
-    return patrol(room, guard)
 
 
 if __name__ == "__main__":
