@@ -7,7 +7,9 @@ def patrol_multiverse(room: Room, guard: Guard) -> bool:
     guard.turn()
     while True:
         loc = guard.location()
+        print("MULTIVERSE location:", *loc)
         if room.been_there(*loc):
+            print("BEEN THERE!")
             return True
 
         room.mark(*loc)
@@ -33,6 +35,7 @@ def solve(input_file: fileinput.FileInput[str]) -> int:
     while True:
         loc = guard.location()
         room.mark(*loc)
+        print("location:", *loc)
 
         newx, newy, blocked, outside = room.probe(*loc)
         if outside:
@@ -42,6 +45,7 @@ def solve(input_file: fileinput.FileInput[str]) -> int:
             guard.turn()
         else:
             if patrol_multiverse(room.with_block(newx, newy), guard.clone()):
+                print("LOOPED")
                 obstacles += 1
             guard.walk_to(newx, newy)
 
