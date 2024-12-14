@@ -8,12 +8,15 @@ class Chunk:
     length: int
 
 
-def dump(disk: list[Chunk]) -> None:
-    s = ""
+def checksum(disk: list[Chunk]) -> int:
+    sum = 0
+    block = 0
     for chunk in disk:
-        char = "." if chunk.id < 0 else str(chunk.id)
-        s += char * chunk.length
-    print(s)
+        for b in range(chunk.length):
+            if chunk.id > 0:
+                sum += block * chunk.id
+            block += 1
+    return sum
 
 
 def solve(input_file: fileinput.FileInput[str]) -> int:
@@ -28,45 +31,46 @@ def solve(input_file: fileinput.FileInput[str]) -> int:
             disk.append(Chunk(-1, int(length)))
         isfile = isfile ^ True
 
-    dump(disk)
-
-    first_empty = 1  # first chunk with empty blocks
-
     get_index = len(disk) - 1
-    put_index = 1
-
-    while get_index > put_index:
-        put_chunk = disk[put_index]
-        put_size = put_chunk.length
-
+    while get_index >= 2:
         get_chunk = disk[get_index]
-        get_size = get_chunk.length
-
-        if get_size > put_size:
-            get_index -= 2
+        if get_chunk.id < 0:
+            get_index -= 1
             continue
 
-        put_chunk.id = get_chunk.id
-        put_chunk.length = get_chunk.length
+        get_size = get_chunk.length
 
-        get_chunk.id = -1
+        for put_index in range(1, get_index):
+            put_chunk = disk[put_index]
+            put_size = put_chunk.length
 
-        hole_size = put_size - get_size
+            if put_chunk.id != -1:
+                put_index += 1
+                continue
 
-        if hole_size > 0:
-            new_chunk = Chunk(-1, hole_size)
-            disk = disk[: put_index + 1] + [new_chunk] + disk[put_index + 1 :]
+            if get_size > put_size:
+                put_index += 1
+                continue
+
+            put_chunk.id = get_chunk.id
+            put_chunk.length = get_chunk.length
+
+            get_chunk.id = -1
+
+            hole_size = put_size - get_size
+
+            if hole_size > 0:
+                new_chunk = Chunk(-1, hole_size)
+                disk = disk[: put_index + 1] + [new_chunk] + disk[put_index + 1 :]
+                put_index += 1
+
             put_index += 1
-            get_index += 1
 
-        put_index += 2
-        get_index -= 2
+            break
 
-        dump(disk)
+        get_index -= 1
 
-    dump(disk)
-
-    return 0
+    return checksum(disk)
 
 
 if __name__ == "__main__":
