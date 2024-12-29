@@ -21,4 +21,4 @@ def test_solution2_example():
 
 def test_solution2():
     file_input = fileinput.FileInput("input.txt")
-    assert solution2.solve(file_input) == 9999
+    assert solution2.solve(file_input) == 1434

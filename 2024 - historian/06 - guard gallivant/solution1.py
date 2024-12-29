@@ -6,6 +6,18 @@ BLOCK = 16
 TRACKS = [1, 2, 4, 8]
 
 
+class Outside(Exception):
+    pass
+
+
+class Blocked(Exception):
+    pass
+
+
+class BeenThere(Exception):
+    pass
+
+
 class Room:
     def __init__(self, m: list[list[str]]) -> None:
         self._h = len(m)
@@ -27,17 +39,9 @@ class Room:
         return r
 
     def been_there(self, x: int, y: int, dir: int) -> bool:
-        return self._m[y][x] & TRACKS[dir] != 0
+        return (self._m[y][x] & TRACKS[dir]) != 0
 
-    def outside(self, x: int, y: int) -> bool:
-        return x < 0 or x >= self._w or y < 0 or y >= self._h
-
-    def blocked(self, x: int, y: int) -> bool:
-        if self.outside(x, y):
-            return False
-        return self._m[y][x] == BLOCK
-
-    def probe(self, x: int, y: int, dir: int) -> tuple[int, int, bool, bool]:
+    def probe(self, x: int, y: int, dir: int) -> tuple[int, int]:
         if dir == 0:  # up
             y -= 1
         elif dir == 1:  # right
@@ -49,7 +53,13 @@ class Room:
         else:
             raise ValueError
 
-        return x, y, self.blocked(x, y), self.outside(x, y)
+        if x < 0 or x >= self._w or y < 0 or y >= self._h:
+            raise Outside
+
+        if self._m[y][x] == BLOCK:
+            raise Blocked
+
+        return x, y
 
     def start_point(self) -> tuple[int, int, int]:
         for y in range(self._h):
@@ -61,19 +71,6 @@ class Room:
     def mark(self, x: int, y: int, dir: int) -> None:
         self._m[y][x] = self._m[y][x] | TRACKS[dir]
 
-    def visited(self) -> int:
-        visited = 0
-        for y in range(self._h):
-            for x in range(self._w):
-                if self._m[y][x] & 0x0F:
-                    visited += 1
-        return visited
-
-    def dump(self) -> None:
-        for y in range(self._h):
-            print(" ".join([f"{x:02x}" for x in self._m[y]]))
-        print()
-
 
 class Guard:
     def __init__(self, x: int, y: int, dir: int) -> None:
@@ -84,15 +81,39 @@ class Guard:
     def clone(self) -> "Guard":
         return Guard(self._x, self._y, self._dir)
 
-    def turn(self) -> None:
-        self._dir = (self._dir + 1) % 4
-
-    def walk_to(self, x: int, y: int) -> None:
-        self._x = x
-        self._y = y
-
     def location(self) -> tuple[int, int, int]:
         return self._x, self._y, self._dir
+
+    def next_step(self, room: Room) -> tuple[int, int, int]:
+        try:
+            newx, newy = room.probe(self._x, self._y, self._dir)
+            self._x = newx
+            self._y = newy
+        except Blocked:
+            self._dir = (self._dir + 1) % 4
+
+        if room.been_there(self._x, self._y, self._dir):
+            raise BeenThere
+
+        return self.location()
+
+
+def patrol(room: Room, guard: Guard) -> set[tuple[int, int]]:
+    path: set[tuple[int, int]] = set()
+    loc = guard.location()
+
+    while True:
+        try:
+            newloc = guard.next_step(room)
+            room.mark(*loc)
+            path.add((loc[0], loc[1]))
+        except Outside:
+            path.add((loc[0], loc[1]))
+            break
+
+        loc = newloc
+
+    return path
 
 
 def solve(input_file: fileinput.FileInput[str]) -> int:
@@ -100,20 +121,13 @@ def solve(input_file: fileinput.FileInput[str]) -> int:
     room = Room(m)
     guard = Guard(*room.start_point())
 
-    while True:
-        loc = guard.location()
-        room.mark(*loc)
+    try:
+        path = patrol(room, guard)
+    except BeenThere:
+        path = set()
+        pass
 
-        newx, newy, blocked, outside = room.probe(*loc)
-        if outside:
-            break
-
-        if blocked:
-            guard.turn()
-        else:
-            guard.walk_to(newx, newy)
-
-    return room.visited()
+    return len(path)
 
 
 if __name__ == "__main__":
